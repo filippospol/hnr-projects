@@ -9,7 +9,9 @@
 
 # Setup environment:
 # pacman::p_load(tidyverse,hoopR,httr,jsonlite,rvest,glue,janitor,fuzzyjoin)
-library(tidyverse)
+library(dplyr)
+library(purrr)
+library(stringr)
 library(hoopR)
 library(httr)
 library(jsonlite)
@@ -463,3 +465,4 @@ rm(list=ls())
 # ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
 
 # ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+
