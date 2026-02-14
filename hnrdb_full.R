@@ -8,7 +8,16 @@
 # ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
 
 # Setup environment:
-pacman::p_load(tidyverse,hoopR,httr,jsonlite,rvest,glue,janitor,fuzzyjoin)
+# pacman::p_load(tidyverse,hoopR,httr,jsonlite,rvest,glue,janitor,fuzzyjoin)
+library(tidyverse)
+library(hoopR)
+library(httr)
+library(jsonlite)
+library(rvest)
+library(glue)
+library(janitor)
+library(fuzzyjoin)
+library(plyr)
 
 # ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
 # ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
@@ -452,4 +461,5 @@ write_csv(hnrsc,"hnr-schedule.csv")
 rm(list=ls())
 
 # ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+
 # ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
