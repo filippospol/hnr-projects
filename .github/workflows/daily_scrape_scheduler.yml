@@ -1,40 +1,50 @@
 name: Daily NBA Data Scrape Scheduler
 
-# Run this script:
 on:
   schedule:
-    # Every morning at 08:00 UTC:
-    - cron: '0 9 * * *' 
-  workflow_dispatch: # Button for manual run
+    - cron: '0 8 * * *' 
+  workflow_dispatch:
 
 jobs:
   scrape-data:
-    runs-on: ubuntu-latest # Cloud computer type
+    runs-on: ubuntu-latest
+    
+    # 1. Create a variable for where R packages will live
+    env:
+      R_LIBS_USER: ${{ github.workspace }}/R/library
 
     steps:
-      # 1. Open your repository:
       - name: Checkout repository
         uses: actions/checkout@v4
 
-      # 2. Install R on the cloud computer:
       - name: Setup R
         uses: r-lib/actions/setup-r@v2
         with:
           r-version: 'release'
 
-      # 3. Install necessary software and libraries:
       - name: Install system dependencies
         run: |
           sudo apt-get update
           sudo apt-get install -y libcurl4-openssl-dev libssl-dev libxml2-dev
 
-      # 4. Install pacman and run your script:
+      # 2. NEW CACHING STEP: Save/Restore packages based on your script's contents
+      - name: Cache R packages
+        uses: actions/cache@v4
+        with:
+          path: ${{ env.R_LIBS_USER }}
+          key: ${{ runner.os }}-r-${{ hashFiles('hnrdb_full.R') }}
+          restore-keys: |
+            ${{ runner.os }}-r-
+      
+      # 3. Create the library folder if it doesn't exist yet
+      - name: Create R library directory
+        run: mkdir -p ${{ env.R_LIBS_USER }}
+
       - name: Run scraper script
         run: |
-          Rscript -e 'install.packages("pacman", repos="https://cloud.r-project.org")'
+          Rscript -e 'if (!require("pacman")) install.packages("pacman", repos="https://cloud.r-project.org")'
           Rscript hnrdb_full.R
 
-      # 5. Save the newly generated CSV files back to GitHub:
       - name: Commit and push new data
         run: |
           git config --local user.name "GitHub Actions Bot"
