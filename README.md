@@ -1,15 +1,14 @@
-# 🏀 Hack n Roll Projects
+# <img src="https://i.ibb.co/QFZd6ftN/Hn-R-No-Backround-White.png" height="60" alt="Hack n Roll Logo" valign="middle"> Hack n Roll
 
-[![Instagram](https://img.shields.io/badge/Instagram-%23E4405F.svg?logo=Instagram&logoColor=white)](https://instagram.com/hacknrollpod)
-[![TikTok](https://img.shields.io/badge/TikTok-%23000000.svg?logo=TikTok&logoColor=white)](https://tiktok.com/@hacknrollpod)
-[![Twitter](https://img.shields.io/badge/Twitter-%231DA1F2.svg?logo=Twitter&logoColor=white)](https://twitter.com/hacknrollpod)
-[![Hack n Roll Videos](https://img.shields.io/badge/YouTube-%23FF0000.svg?logo=YouTube&logoColor=white)](https://youtube.com/@HacknRollVideos)
 [![Hack n Roll NBA](https://img.shields.io/badge/YouTube-%23FF0000.svg?logo=YouTube&logoColor=white)](https://youtube.com/@HacknRollNBA)
+[![Instagram](https://img.shields.io/badge/Instagram-%23E4405F.svg?logo=Instagram&logoColor=white)](https://instagram.com/hacknrollpod)
+[![Twitter](https://img.shields.io/badge/Twitter-%231DA1F2.svg?logo=Twitter&logoColor=white)](https://twitter.com/hacknrollpod)
+[![TikTok](https://img.shields.io/badge/TikTok-%23000000.svg?logo=TikTok&logoColor=white)](https://tiktok.com/@hacknrollpod)
 
-[![R Version](https://img.shields.io/badge/R-4.0+-blue.svg?logo=R)](https://cran.r-project.org/)
-[![Shiny](https://img.shields.io/badge/Shiny-App-brightgreen.svg?logo=RStudio)](https://shiny.posit.co/)
-[![Data Automation](https://github.com/filippospol/Hack-n-Roll-Projects/actions/workflows/daily_scrape.yml/badge.svg)](https://github.com/filippospol/Hack-n-Roll-Projects/actions)
-[![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
+*For the love of the game 🏀 Hosted by Manos, Vassilis and Filippos.*
 
-> **This repository includes some of the programming and coding tricks we use on our daily research and weekly episodes.**
+---
 
+Welcome to the Hack n Roll Github repository. In here, you will find some of the coding and programming work we have conducted for our daily research and weekly podcast episodes.
+
+More specifically, there are some automated actions that update our [NBA Statistics Database](https://fp-dev.shinyapps.io/hack-n-roll/), as well as some other projects that will be added in the near future.
