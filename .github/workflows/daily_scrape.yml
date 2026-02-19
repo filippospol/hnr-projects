@@ -33,7 +33,7 @@ jobs:
       - name: Run scraper script
         run: |
           for i in 1 2 3; do
-            Rscript hnr-app-ascraper.R && break || echo "NBA API failed. Retrying in 15 seconds..." && sleep 15
+            Rscript hnr-app-scraper.R && break || echo "NBA API failed. Retrying in 15 seconds..." && sleep 15
           done
 
       - name: Commit and push new data
