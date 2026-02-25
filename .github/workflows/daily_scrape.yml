@@ -37,8 +37,8 @@ jobs:
 
       - name: Run scraper script
         run: |
-          for i in 1 2 3; do
-            Rscript hnr-app-scraper.R && break || echo "NBA API failed. Retrying in 10 seconds..." && sleep 10
+          for i in 1; do
+            Rscript hnr-app-scraper.R && break || echo "NBA API failed. Check logs / download locally." && sleep 5
           done
 
       - name: Commit and push new data
