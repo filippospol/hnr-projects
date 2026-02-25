@@ -7,7 +7,8 @@ on:
 
 jobs:
   scrape-data:
-    runs-on: ubuntu-22.04 
+    # runs-on: ubuntu-22.04 
+    runs-on: macos-latest
     
     steps:
       - name: Checkout repository
@@ -23,7 +24,6 @@ jobs:
           sudo apt-get update
           sudo apt-get install -y libcurl4-openssl-dev libssl-dev libxml2-dev libfontconfig1-dev libharfbuzz-dev libfribidi-dev libfreetype6-dev libpng-dev libtiff5-dev libjpeg-dev
 
-      # 100% Pre-compiled Binaries. No source building allowed.
       - name: Install R packages
         run: |
           options(repos = c(CRAN = "https://packagemanager.posit.co/cran/__linux__/jammy/latest"))
