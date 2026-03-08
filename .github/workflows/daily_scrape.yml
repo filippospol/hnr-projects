@@ -1,14 +1,13 @@
 name: Daily NBA Data Scrape
 
-on:
-  schedule:
-    - cron: '0 7 * * *' 
+# on:
+#  schedule:
+#    - cron: '0 5 * * *' 
   workflow_dispatch:
 
 jobs:
   scrape-data:
-    runs-on: ubuntu-22.04 
-    # runs-on: macos-latest
+    runs-on: macos-latest
     
     steps:
       - name: Checkout repository
@@ -19,17 +18,12 @@ jobs:
         with:
           r-version: 'release'
 
-      #- name: Install system dependencies # run on macos-latest version
-      #  run: |
-      #    brew update
-      #    brew install curl openssl libxml2
-      
-      - name: Install system dependencies
+      - name: Install system dependencies # run on macos-latest version
         run: |
-          sudo apt-get update
-          sudo apt-get install -y libcurl4-openssl-dev libssl-dev libxml2-dev libfontconfig1-dev libharfbuzz-dev libfribidi-dev libfreetype6-dev libpng-dev libtiff5-dev libjpeg-dev
+          brew update
+          brew install curl openssl libxml2
 
-      - name: Install R packages
+      - name: Install R libraries
         run: |
           options(repos = c(CRAN = "https://packagemanager.posit.co/cran/__linux__/jammy/latest"))
           install.packages(c("tidyverse", "hoopR", "httr", "jsonlite", "rvest", "glue", "janitor", "fuzzyjoin", "plyr"))
@@ -43,8 +37,8 @@ jobs:
 
       - name: Commit and push new data
         run: |
-          git config --local user.name "GitHub Actions Bot"
-          git config --local user.email "actions@github.com"
-          git add *.csv
+          git config --global user.name "GitHub Action"
+          git config --global user.email "action@github.com"
+          git add -A
           git commit -m "Auto-update daily NBA stats" || echo "No changes to commit"
           git push origin main
