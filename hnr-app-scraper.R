@@ -260,7 +260,7 @@ write_csv(hnrt,"hnr-app-teams.csv")
 # ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
 # ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
 
-rm(list=ls())
+rm(list=setdiff(ls(),c("nba_headers")))
 season="2025-26";season_type="Regular%20Season";per_mode="Totals"
 s = "https://raw.githubusercontent.com/filippospol/R-bball-projects/refs/heads/main/"
 source(paste0(s,"scraper%20functions/bbref/bbref_advanced.R"))
