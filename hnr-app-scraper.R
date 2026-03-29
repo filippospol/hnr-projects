@@ -22,6 +22,30 @@ library(janitor)
 #library(fuzzyjoin)
 
 # ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+# NBA API BYPASS HEADERS
+# ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+
+nba_headers = c(
+  "Accept" = "application/json, text/plain, */*",
+  "Accept-Language" = "en-US,en;q=0.9",
+  "Cache-Control" = "no-cache",
+  "Connection" = "keep-alive",
+  "Origin" = "https://www.nba.com",
+  "Pragma" = "no-cache",
+  "Referer" = "https://www.nba.com/",
+  "Sec-Ch-Ua" = '"Google Chrome";v="131", "Chromium";v="131", "Not_A Brand";v="24"',
+  "Sec-Ch-Ua-Mobile" = "?0",
+  "Sec-Ch-Ua-Platform" = '"Windows"',
+  "Sec-Fetch-Dest" = "empty",
+  "Sec-Fetch-Mode" = "cors",
+  "Sec-Fetch-Site" = "same-site",
+  "User-Agent" = "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/131.0.0.0 Safari/537.36"
+)
+
+# Force httr (and hoopR) to use these headers for all requests
+httr::set_config(httr::add_headers(.headers = nba_headers))
+
+# ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
 # ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
 
 season="2025-26";season_type="Regular%20Season";per_mode="Totals"
@@ -46,6 +70,7 @@ teams_info = left_join(
 # Team Shot Location Frequency and Efficiency:
 ## CODE: LOC_
 Sys.sleep(5)
+httr::reset_config()
 myurl=GET(glue("https://api.pbpstats.com/get-totals/nba?Season={season}&SeasonType={season_type}&Type=Team&StatType={per_mode}&StarterState=All&StartType=All"))
 
 teams_loc_all = suppressMessages(
@@ -124,6 +149,7 @@ rm(teams_loc_all,opp_loc_all,myurl)
 # Four Factors:
 ## CODE: FF_
 Sys.sleep(5)
+httr::set_config(httr::add_headers(.headers = nba_headers))
 fourfactors = nba_leaguedashteamstats(season=season,measure_type="Four Factors") %>% 
   pluck(1) %>% 
   select(INFO_TEAM_ID=TEAM_ID,
@@ -223,7 +249,7 @@ hnrt = mget(ls(), .GlobalEnv) %>%
   # Convert counting stats to per 100 possessions format
   mutate_at(c(13,14,17,18,22,25,27,70:72,74,76:79), ~./PBP_OFF_POSS*100) %>% 
   mutate_at(c(12,15,16,26,80), ~./PBP_DEF_POSS*100) 
-rm(list=setdiff(ls(),"hnrt"))
+rm(list=setdiff(ls(),c("hnrt","nba_headers")))
 
 # ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
 # ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
@@ -259,6 +285,7 @@ pcom = left_join(
   by="PLAYER_ID"
 )
 
+httr::reset_config()
 pref = left_join(
   bbref_advanced(season=season) %>% 
     select(PLAYER_NAME,TEAM_BBREF=TEAM,TS_PCT,USG_PCT,FTA_RATE:TOV_PCT),
@@ -336,12 +363,13 @@ hnrp = plyr::join_all(list(pBase,pPbp),type="left") %>%
 
 ## Save data:
 write_csv(hnrp,"hnr-app-players.csv")
-rm(list=setdiff(ls(),c("hnrp","hnrt")))
+rm(list=setdiff(ls(),c("hnrp","hnrt","nba_headers")))
 
 # ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
 # ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
 
 # Expanded Standings
+httr::set_config(httr::add_headers(.headers = nba_headers))
 x1 = nba_leaguestandings(season="2025-26") %>% 
   pluck(1) %>% 
   clean_names("all_caps") %>% 
@@ -351,6 +379,7 @@ x1 = nba_leaguestandings(season="2025-26") %>%
   mutate(STREAK=if_else(as.numeric(STREAK)>0,
                         paste0("W",STREAK),paste0("L",abs(as.numeric(STREAK))))
   )
+httr::reset_config()
 x2 = suppressMessages(
   "https://www.espn.com/nba/standings/_/view/expanded" %>% 
     read_html() %>%
@@ -406,16 +435,17 @@ hnrs = x %>%
   group_by(CONFERENCE) %>% 
   mutate(RANK=paste0(row_number(),"."),.before=1) %>% 
   ungroup()
-rm(list=setdiff(ls(),c("hnrs")))
+rm(list=setdiff(ls(),c("hnrs","nba_headers")))
 
 ## Save data:
 write_csv(hnrs,"hnr-app-standings.csv")
-rm(list=ls())
+rm(list=setdiff(ls(),c("nba_headers")))
 
 # ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
 # ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
 
 # Schedule:
+httr::set_config(httr::add_headers(.headers = nba_headers))
 scheduleSimple = nba_schedule(season="2025-26") %>% 
   clean_names("all_caps") %>% 
   select(GAME_DATE,GAME_ID,GAME_STATUS_TEXT,
@@ -463,12 +493,3 @@ write_csv(hnrsc,"hnr-app-schedule.csv")
 rm(list=ls())
 
 # ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
-
-# ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
-
-
-
-
-
-
-
