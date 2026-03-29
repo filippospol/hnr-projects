@@ -43,7 +43,10 @@ nba_headers = c(
 )
 
 # Force httr (and hoopR) to use these headers for all requests
-httr::set_config(httr::add_headers(.headers = nba_headers))
+httr::set_config(
+  c(httr::add_headers(.headers = nba_headers),
+    httr::use_proxy(url = "127.0.0.1", port = 9050, auth = "socks5"))
+)
 
 # ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
 # ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
@@ -149,7 +152,10 @@ rm(teams_loc_all,opp_loc_all,myurl)
 # Four Factors:
 ## CODE: FF_
 Sys.sleep(5)
-httr::set_config(httr::add_headers(.headers = nba_headers))
+httr::set_config(
+  c(httr::add_headers(.headers = nba_headers),
+    httr::use_proxy(url = "127.0.0.1", port = 9050, auth = "socks5"))
+)
 fourfactors = nba_leaguedashteamstats(season=season,measure_type="Four Factors") %>% 
   pluck(1) %>% 
   select(INFO_TEAM_ID=TEAM_ID,
@@ -369,7 +375,10 @@ rm(list=setdiff(ls(),c("hnrp","hnrt","nba_headers")))
 # ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
 
 # Expanded Standings
-httr::set_config(httr::add_headers(.headers = nba_headers))
+httr::set_config(
+  c(httr::add_headers(.headers = nba_headers),
+    httr::use_proxy(url = "127.0.0.1", port = 9050, auth = "socks5"))
+)
 x1 = nba_leaguestandings(season="2025-26") %>% 
   pluck(1) %>% 
   clean_names("all_caps") %>% 
@@ -445,7 +454,10 @@ rm(list=setdiff(ls(),c("nba_headers")))
 # ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
 
 # Schedule:
-httr::set_config(httr::add_headers(.headers = nba_headers))
+httr::set_config(
+  c(httr::add_headers(.headers = nba_headers),
+    httr::use_proxy(url = "127.0.0.1", port = 9050, auth = "socks5"))
+)
 scheduleSimple = nba_schedule(season="2025-26") %>% 
   clean_names("all_caps") %>% 
   select(GAME_DATE,GAME_ID,GAME_STATUS_TEXT,
