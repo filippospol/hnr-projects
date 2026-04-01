@@ -1,15 +1,17 @@
 name: Daily NBA Data Scrape
+
 on:
- # schedule:
- #   - cron: '0 5 * * *'
+  # schedule:
+  #  - cron: '0 5 * * *' 
   workflow_dispatch:
 
 jobs:
   scrape-data:
-    runs-on: ubuntu-latest
+    runs-on: macos-latest
+    # MANDATORY: Grant write permission to push the CSV/Data back to the repo
     permissions:
       contents: write
-
+    
     steps:
       - name: Checkout repository
         uses: actions/checkout@v4
@@ -21,37 +23,23 @@ jobs:
 
       - name: Install system dependencies
         run: |
-          sudo apt-get update -y
-          sudo apt-get install -y libxml2-dev libcurl4-openssl-dev libssl-dev tor
-
-      - name: Start Tor and wait for it to be ready
+          # libxml2 is the main one needed for rvest/xml2 on Mac
+          brew install libxml2
+          
+      - name: Start Tor Network
         run: |
-          sudo systemctl start tor
-          # Wait until Tor's SOCKS port is actually accepting connections
-          for i in $(seq 1 30); do
-            if nc -z 127.0.0.1 9050 2>/dev/null; then
-              echo "Tor is ready."
-              break
-            fi
-            echo "Waiting for Tor... ($i)"
-            sleep 2
-          done
+          # Start Tor in the background
+          tor &
+          sleep 15
 
       - name: Install R libraries
         run: |
+          # Use a standard CRAN mirror compatible with macOS
           options(repos = c(CRAN = "https://cran.rstudio.com/"))
-          install.packages(c(
-            "tidyverse", "hoopR", "httr", "jsonlite",
-            "rvest", "glue", "janitor", "fuzzyjoin", "plyr", "beepr"
-          ))
+          install.packages(c("tidyverse", "hoopR", "httr", "jsonlite", "rvest", "glue", "janitor", "fuzzyjoin", "plyr"))
         shell: Rscript {0}
 
       - name: Run scraper script
-        # Tell curl/httr to use Tor's SOCKS5 proxy for ALL outbound requests
-        env:
-          ALL_PROXY: "socks5h://127.0.0.1:9050"
-          HTTPS_PROXY: "socks5h://127.0.0.1:9050"
-          HTTP_PROXY: "socks5h://127.0.0.1:9050"
         run: |
           Rscript hnr-app-scraper.R
 
@@ -60,5 +48,5 @@ jobs:
           git config --global user.name "github-actions[bot]"
           git config --global user.email "github-actions[bot]@users.noreply.github.com"
           git add -A
-          git diff --quiet && git diff --staged --quiet || \
-            (git commit -m "Auto-update daily NBA stats" && git push origin main)
+          # Only commit if there are actually changes
+          git diff --quiet && git diff --staged --quiet || (git commit -m "Auto-update daily NBA stats" && git push origin main)
