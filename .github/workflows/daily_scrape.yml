@@ -34,6 +34,8 @@ jobs:
         shell: Rscript {0}
 
       - name: Run scraper script
+        env:
+          SCRAPERAPI_KEY: ${{ secrets.SCRAPERAPI_KEY }}
         run: |
           Rscript hnr-app-scraper.R
 
