@@ -22,8 +22,25 @@ library(janitor)
 #library(fuzzyjoin)
 
 # ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
-# SCRAPERAPI PROXY SETUP
+# NBA API BYPASS HEADERS & SCRAPERAPI PROXY SETUP
 # ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+
+nba_headers = c(
+  "Accept" = "application/json, text/plain, */*",
+  "Accept-Language" = "en-US,en;q=0.9",
+  "Cache-Control" = "no-cache",
+  "Connection" = "keep-alive",
+  "Origin" = "https://www.nba.com",
+  "Pragma" = "no-cache",
+  "Referer" = "https://www.nba.com/",
+  "Sec-Ch-Ua" = '"Google Chrome";v="131", "Chromium";v="131", "Not_A Brand";v="24"',
+  "Sec-Ch-Ua-Mobile" = "?0",
+  "Sec-Ch-Ua-Platform" = '"Windows"',
+  "Sec-Fetch-Dest" = "empty",
+  "Sec-Fetch-Mode" = "cors",
+  "Sec-Fetch-Site" = "same-site",
+  "User-Agent" = "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/131.0.0.0 Safari/537.36"
+)
 
 # Pull your secret key from the GitHub Actions environment
 scraperapi_key <- Sys.getenv("SCRAPERAPI_KEY")
@@ -32,19 +49,27 @@ scraperapi_key <- Sys.getenv("SCRAPERAPI_KEY")
 enable_nba_proxy <- function() {
   if (scraperapi_key != "") {
     httr::set_config(
-      httr::use_proxy(
-        url = "proxy-server.scraperapi.com", 
-        port = 8001, 
-        username = "scraperapi", 
-        password = scraperapi_key
+      c(
+        httr::add_headers(.headers = nba_headers),
+        httr::use_proxy(
+          url = "proxy-server.scraperapi.com", 
+          port = 8001, 
+          # IMPORTANT: .keep_headers=true forces ScraperAPI to send our fake Chrome headers
+          username = "scraperapi.keep_headers=true", 
+          password = scraperapi_key
+        )
       )
     )
+    message("✅ Configured ScraperAPI Proxy WITH custom headers.")
+  } else {
+    # Fallback just in case the proxy key fails to load
+    httr::set_config(httr::add_headers(.headers = nba_headers))
+    message("⚠️ Running headers only (No proxy key found).")
   }
 }
 
 # Turn it on initially
 enable_nba_proxy()
-
 # ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
 # ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
 
