@@ -25,12 +25,6 @@ jobs:
         run: |
           # libxml2 is the main one needed for rvest/xml2 on Mac
           brew install libxml2
-          
-      - name: Start Tor Network
-        run: |
-          # Start Tor in the background
-          tor &
-          sleep 15
 
       - name: Install R libraries
         run: |
