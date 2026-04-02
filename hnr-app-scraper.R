@@ -22,36 +22,34 @@ library(janitor)
 #library(fuzzyjoin)
 
 # ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
-# NBA API BYPASS HEADERS
+# SCRAPERAPI PROXY SETUP
 # ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
 
-nba_headers = c(
-  "Accept" = "application/json, text/plain, */*",
-  "Accept-Language" = "en-US,en;q=0.9",
-  "Cache-Control" = "no-cache",
-  "Connection" = "keep-alive",
-  "Origin" = "https://www.nba.com",
-  "Pragma" = "no-cache",
-  "Referer" = "https://www.nba.com/",
-  "Sec-Ch-Ua" = '"Google Chrome";v="131", "Chromium";v="131", "Not_A Brand";v="24"',
-  "Sec-Ch-Ua-Mobile" = "?0",
-  "Sec-Ch-Ua-Platform" = '"Windows"',
-  "Sec-Fetch-Dest" = "empty",
-  "Sec-Fetch-Mode" = "cors",
-  "Sec-Fetch-Site" = "same-site",
-  "User-Agent" = "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/131.0.0.0 Safari/537.36"
-)
+# Pull your secret key from the GitHub Actions environment
+scraperapi_key <- Sys.getenv("SCRAPERAPI_KEY")
 
-# Force httr (and hoopR) to use these headers for all requests
-httr::set_config(
-  c(httr::add_headers(.headers = nba_headers),
-    httr::use_proxy(url = "127.0.0.1", port = 9050))
-)
+# Create a helper function to easily turn the proxy ON when hitting the NBA API
+enable_nba_proxy <- function() {
+  if (scraperapi_key != "") {
+    httr::set_config(
+      httr::use_proxy(
+        url = "proxy-server.scraperapi.com", 
+        port = 8001, 
+        username = "scraperapi", 
+        password = scraperapi_key
+      )
+    )
+  }
+}
+
+# Turn it on initially
+enable_nba_proxy()
 
 # ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
 # ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
 
 season="2025-26";season_type="Regular%20Season";per_mode="Totals"
+
 # Team Information:
 ## CODE: INFO_
 teams_info = left_join(
@@ -73,7 +71,9 @@ teams_info = left_join(
 # Team Shot Location Frequency and Efficiency:
 ## CODE: LOC_
 Sys.sleep(5)
+# Turn off proxy for PBPStats so we don't waste ScraperAPI credits!
 httr::reset_config()
+
 myurl=GET(glue("https://api.pbpstats.com/get-totals/nba?Season={season}&SeasonType={season_type}&Type=Team&StatType={per_mode}&StarterState=All&StartType=All"))
 
 teams_loc_all = suppressMessages(
@@ -152,10 +152,9 @@ rm(teams_loc_all,opp_loc_all,myurl)
 # Four Factors:
 ## CODE: FF_
 Sys.sleep(5)
-httr::set_config(
-  c(httr::add_headers(.headers = nba_headers),
-    httr::use_proxy(url = "127.0.0.1", port = 9050))
-)
+# Turn proxy back ON for the NBA API
+enable_nba_proxy()
+
 fourfactors = nba_leaguedashteamstats(season=season,measure_type="Four Factors") %>% 
   pluck(1) %>% 
   select(INFO_TEAM_ID=TEAM_ID,
@@ -255,7 +254,7 @@ hnrt = mget(ls(), .GlobalEnv) %>%
   # Convert counting stats to per 100 possessions format
   mutate_at(c(13,14,17,18,22,25,27,70:72,74,76:79), ~./PBP_OFF_POSS*100) %>% 
   mutate_at(c(12,15,16,26,80), ~./PBP_DEF_POSS*100) 
-rm(list=setdiff(ls(),c("hnrt","nba_headers")))
+rm(list=setdiff(ls(),c("hnrt","enable_nba_proxy")))
 
 # ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
 # ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
@@ -266,7 +265,7 @@ write_csv(hnrt,"hnr-app-teams.csv")
 # ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
 # ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
 
-rm(list=setdiff(ls(),c("nba_headers")))
+rm(list=setdiff(ls(),c("enable_nba_proxy")))
 season="2025-26";season_type="Regular%20Season";per_mode="Totals"
 s = "https://raw.githubusercontent.com/filippospol/R-bball-projects/refs/heads/main/"
 source(paste0(s,"scraper%20functions/bbref/bbref_advanced.R"))
@@ -281,6 +280,10 @@ source(paste0(s,"mergeStats.R")) ; rm(s)
 ## GP,MP,POSS
 ## POS, CTG_POS
 ## USG%, TS%, %
+
+# Ensure proxy is on for NBA stats
+enable_nba_proxy()
+
 pcom = left_join(
   nba_leaguedashplayerstats(season=season,per_mode=per_mode,measure_type="Advanced") %>% 
     pluck(1) %>% 
@@ -291,7 +294,9 @@ pcom = left_join(
   by="PLAYER_ID"
 )
 
+# Turn off proxy for BBRef
 httr::reset_config()
+
 pref = left_join(
   bbref_advanced(season=season) %>% 
     select(PLAYER_NAME,TEAM_BBREF=TEAM,TS_PCT,USG_PCT,FTA_RATE:TOV_PCT),
@@ -319,6 +324,7 @@ rm(pcom,pref)
 
 # Shot distribution
 ## FGA & FG%
+# Leave proxy OFF for PBPStats
 myurl=GET(glue("https://api.pbpstats.com/get-totals/nba?Season={season}&SeasonType={season_type}&Type=Player&StatType={per_mode}&StarterState=All&StartType=All"))
 
 pPbp = suppressMessages(
@@ -369,16 +375,14 @@ hnrp = plyr::join_all(list(pBase,pPbp),type="left") %>%
 
 ## Save data:
 write_csv(hnrp,"hnr-app-players.csv")
-rm(list=setdiff(ls(),c("hnrp","hnrt","nba_headers")))
+rm(list=setdiff(ls(),c("hnrp","hnrt","enable_nba_proxy")))
 
 # ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
 # ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
 
 # Expanded Standings
-httr::set_config(
-  c(httr::add_headers(.headers = nba_headers),
-    httr::use_proxy(url = "127.0.0.1", port = 9050))
-)
+enable_nba_proxy()
+
 x1 = nba_leaguestandings(season="2025-26") %>% 
   pluck(1) %>% 
   clean_names("all_caps") %>% 
@@ -388,7 +392,9 @@ x1 = nba_leaguestandings(season="2025-26") %>%
   mutate(STREAK=if_else(as.numeric(STREAK)>0,
                         paste0("W",STREAK),paste0("L",abs(as.numeric(STREAK))))
   )
+
 httr::reset_config()
+
 x2 = suppressMessages(
   "https://www.espn.com/nba/standings/_/view/expanded" %>% 
     read_html() %>%
@@ -444,20 +450,18 @@ hnrs = x %>%
   group_by(CONFERENCE) %>% 
   mutate(RANK=paste0(row_number(),"."),.before=1) %>% 
   ungroup()
-rm(list=setdiff(ls(),c("hnrs","nba_headers")))
+rm(list=setdiff(ls(),c("hnrs","enable_nba_proxy")))
 
 ## Save data:
 write_csv(hnrs,"hnr-app-standings.csv")
-rm(list=setdiff(ls(),c("nba_headers")))
+rm(list=setdiff(ls(),c("enable_nba_proxy")))
 
 # ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
 # ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
 
 # Schedule:
-httr::set_config(
-  c(httr::add_headers(.headers = nba_headers),
-    httr::use_proxy(url = "127.0.0.1", port = 9050))
-)
+enable_nba_proxy()
+
 scheduleSimple = nba_schedule(season="2025-26") %>% 
   clean_names("all_caps") %>% 
   select(GAME_DATE,GAME_ID,GAME_STATUS_TEXT,
