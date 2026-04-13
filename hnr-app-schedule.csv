@@ -1,32 +1,22 @@
 TEAM_NAME,NEXT_GAMES
-Atlanta Hawks,"@ ORL, @ BKN, vs NYK, @ CLE, vs CLE"
-Boston Celtics,"@ MIA, @ MIL, vs TOR, vs CHA, @ NYK"
-Brooklyn Nets,"vs ATL, vs WAS, vs MIL, vs IND, @ MIL"
-Charlotte Hornets,"vs PHX, vs IND, @ MIN, @ BOS, vs DET"
-Chicago Bulls,"vs IND, @ NYK, vs PHX, @ WAS, @ WAS"
-Cleveland Cavaliers,"@ GSW, vs IND, @ MEM, vs ATL, @ ATL"
-Dallas Mavericks,"vs ORL, vs LAL, @ LAC, @ PHX, @ SAS"
-Denver Nuggets,"@ UTA, vs SAS, vs POR, vs MEM, vs OKC"
-Detroit Pistons,"vs MIN, @ PHI, @ ORL, vs MIL, @ CHA"
-Golden State Warriors,"vs SAS, vs CLE, vs HOU, vs SAC, vs LAL"
-Houston Rockets,"vs MIL, vs UTA, @ GSW, @ PHX, vs PHI"
-Indiana Pacers,"@ CHI, @ CHA, @ CLE, vs MIN, @ BKN"
-LA Clippers,"vs SAS, @ SAC, vs DAL, vs OKC, @ POR"
-Los Angeles Lakers,"@ OKC, @ DAL, vs OKC, @ GSW, vs PHX"
-Memphis Grizzlies,"vs NYK, vs TOR, @ MIL, vs CLE, @ DEN"
-Miami Heat,"vs BOS, vs WAS, @ TOR, @ TOR, @ WAS"
-Milwaukee Bucks,"@ HOU, vs BOS, vs MEM, @ BKN, @ DET"
-Minnesota Timberwolves,"@ DET, @ PHI, vs CHA, @ IND, @ ORL"
-NA NA,"@ NA, @ NA, @ NA, @ NA, @ NA"
-New Orleans Pelicans,"@ POR, @ SAC, vs ORL, vs UTA, @ BOS"
-New York Knicks,"@ MEM, vs CHI, @ ATL, vs BOS, vs TOR"
-Oklahoma City Thunder,"vs LAL, vs UTA, @ LAL, @ LAC, @ DEN"
-Orlando Magic,"vs ATL, @ DAL, @ NOP, vs DET, vs MIN"
-Philadelphia 76ers,"@ WAS, vs MIN, vs DET, @ SAS, @ HOU"
-Phoenix Suns,"@ CHA, @ CHI, vs HOU, vs DAL, @ LAL"
-Portland Trail Blazers,"vs NOP, @ DEN, @ SAS, vs LAC, vs SAC"
-Sacramento Kings,"@ TOR, vs NOP, vs LAC, @ GSW, vs GSW"
-San Antonio Spurs,"@ GSW, @ LAC, @ DEN, vs PHI, vs POR"
-Toronto Raptors,"vs SAC, @ MEM, @ BOS, vs MIA, vs MIA"
-Utah Jazz,"vs DEN, @ HOU, @ OKC, @ NOP, vs MEM"
-Washington Wizards,"vs PHI, @ MIA, @ BKN, vs CHI, vs CHI"
+Atlanta Hawks,@ NYK
+Boston Celtics,vs NA
+Charlotte Hornets,vs MIA
+Cleveland Cavaliers,vs TOR
+Denver Nuggets,vs MIN
+Detroit Pistons,vs NA
+Golden State Warriors,@ LAC
+Houston Rockets,@ LAL
+LA Clippers,vs GSW
+Los Angeles Lakers,vs HOU
+Miami Heat,@ CHA
+Minnesota Timberwolves,@ DEN
+NA NA,"@ NA, @ NA, @ NA, @ NA, @ BOS"
+New York Knicks,vs ATL
+Oklahoma City Thunder,vs NA
+Orlando Magic,@ PHI
+Philadelphia 76ers,vs ORL
+Phoenix Suns,vs POR
+Portland Trail Blazers,@ PHX
+San Antonio Spurs,vs NA
+Toronto Raptors,@ CLE
