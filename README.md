@@ -10,5 +10,3 @@
 ---
 
 Welcome to the Hack n Roll Github repository. In here, you will find some of the coding and programming work we have conducted for our daily research and weekly podcast episodes.
-
-More specifically, there are some automated actions that update our [NBA Statistics Database](https://fp-dev.shinyapps.io/hack-n-roll/), as well as some other projects that will be added in the near future.
